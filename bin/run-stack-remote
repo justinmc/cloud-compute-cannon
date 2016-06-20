@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+SERVER_HOST=$1
+SERVER_CONFIG_PATH=$2
+rsync -av --exclude=serverconfig.yml --exclude=node_modules --exclude=.git --exclude=tmp --exclude=.haxelib --exclude=.cloudcomputecannon --exclude=data/computejobs/* --exclude=data/registry/* --exclude=data/ServiceStorageLocalFileSystem/* --exclude=.vagrant --exclude=.bundle ./ $SERVER_HOST:ccc/
+echo "scp $SERVER_CONFIG_PATH $SERVER_HOST:ccc/serverconfig.yml"
+
+DOCKER_COMPOSE="docker-compose"
+COMMAND="$DOCKER_COMPOSE rm -fv && $DOCKER_COMPOSE build && COMPUTE_CONFIG=\`cat serverconfig.yml\` $DOCKER_COMPOSE up -d"
+echo $COMMAND
+# ssh $SERVER_HOST "cd ccc && $COMMAND"
