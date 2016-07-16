@@ -259,6 +259,7 @@ class Job
 				// Eventually we'll restart, for now, just run the damn job
 				var p = Promise.promise(true)
 					.pipe(function(_) {
+						JobStatsLogger.setStateTime(_redis, jobId)
 						var executecallResult = executeJob();
 						executecallResult.promise.catchError(function(err) {
 							_cancelWorkingJob = null;
