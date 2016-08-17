@@ -48,6 +48,7 @@ class Constants
 	inline public static var ENV_VAR_AWS_PROVIDER_CONFIG = 'AWS_PROVIDER_CONFIG';
 	inline public static var ENV_VAR_COMPUTE_CONFIG = 'COMPUTE_CONFIG';
 	inline public static var ENV_VAR_COMPUTE_CONFIG_PATH = 'CONFIG_PATH';
+	inline public static var ENV_VAR_REMOVE_JOBS_IN_QUEUE = 'REMOVE_JOBS_IN_QUEUE';
 	/* Env vars for running tests*/
 	inline public static var ENV_AWS_KEY = 'AWS_KEY';
 	inline public static var ENV_AWS_KEYID = 'AWS_KEYID';

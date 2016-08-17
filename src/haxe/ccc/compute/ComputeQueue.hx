@@ -1166,7 +1166,6 @@ abstract Stats(Array<Float>)
 		Reflect.setField(obj, 'time_finished', finishTime);
 		return obj;
 	}
-
 }
 
 /*
@@ -1177,7 +1176,7 @@ typedef QueueJsonDump = {
 	var pending :Array<JobId>;
 	var working :Array<{id:JobId, score:Float}>;
 	var computeJobIds :TypedDynamicObject<JobId, ComputeJobId>;
-	var jobIds :TypedDynamicObject<ComputeJobId,JobId>;
+	var jobIds :TypedDynamicObject<ComputeJobId, JobId>;
 	var jobStatus :TypedDynamicObject<JobId, JobStatusUpdate>;
 	var stats :TypedDynamicObject<JobId, Stats>;
 	var jobFinishedStatus :TypedDynamicObject<JobId, JobFinishedStatus>;

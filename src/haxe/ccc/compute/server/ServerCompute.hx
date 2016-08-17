@@ -83,7 +83,7 @@ class ServerCompute
 		//Load env vars from an .env file if present
 		Node.require('dotenv').config({path: '/config/.env', silent: true});
 
-		var env = Node.process.env;
+		var env :haxe.DynamicAccess<String> = Node.process.env;
 
 		Logger.log = new AbstractLogger({name: APP_NAME_COMPACT});
 		// haxe.Log.trace = function(v :Dynamic, ?infos : haxe.PosInfos ) :Void {
@@ -91,7 +91,7 @@ class ServerCompute
 		// }
 
 		Node.process.on(ProcessEvent.UncaughtException, function(err) {
-			Log.critical({crash:err.stack, message:'crash'});
+			Log.critical({crash:err.stack, errorJson:Json.stringify(err), message:'crash'});
 			Node.process.exit(1);
 		});
 
@@ -308,7 +308,15 @@ class ServerCompute
 							});
 					});
 			})
+			.pipe(function(_) {
+				if (env[ENV_VAR_REMOVE_JOBS_IN_QUEUE] == 'true' || Std.string(env[ENV_VAR_REMOVE_JOBS_IN_QUEUE]) == 'true' || env[ENV_VAR_REMOVE_JOBS_IN_QUEUE] == '1') {
+					return Promise.promise(true);
+				} else {
+					return Promise.promise(true);
+				}
+			})
 			.then(function(_) {
+				traceGreen("building services");
 				status = ServerStatus.BuildingServices_3_4;
 				Log.debug({server_status:status});
 				//Build and inject the app logic
@@ -363,7 +371,7 @@ class ServerCompute
 
 				//Run internal tests
 				Log.debug('Running server functional tests');
-				promhx.RequestPromises.get('http://localhost:${SERVER_DEFAULT_PORT}${SERVER_RPC_URL}/server-tests?compute=true')
+				promhx.RequestPromises.get('http://localhost:${SERVER_DEFAULT_PORT}${SERVER_RPC_URL}/server-tests?storage=true')
 					.then(function(out) {
 						try {
 							var results = Json.parse(out);

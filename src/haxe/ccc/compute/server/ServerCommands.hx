@@ -46,6 +46,18 @@ class ServerCommands
 			});
 	}
 
+	// public static function emptyQueueAndWorking(redis :RedisClient) :Promise<Bool>
+	// {
+	// 	return ComputeQueue.toJson(redis)
+	// 		.pipe(function(out) {
+	// 			var promises = [];
+	// 			var workingJobIds = out.computeJobIds.keys();
+	// 			for (jobId in workingJobIds) {
+	// 				promise.push(ComputeQueue.finishComputeJob(redis, out.computeJobIds[jobId], JobFinishedStatus.Killed, 'Job killed because queue killed'))
+	// 			}
+	// 		});
+	// }
+
 	public static function pending(redis :RedisClient) :Promise<Array<JobId>>
 	{
 		return ComputeQueue.toJson(redis)
