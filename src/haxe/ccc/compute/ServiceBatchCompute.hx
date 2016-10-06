@@ -306,6 +306,7 @@ class ServiceBatchCompute
 
 	@rpc({
 		alias:'submitJobJson',
+		doc:'Submit a job as a JSON object',
 		args:{
 			'job': {'doc':'BasicBatchProcessRequest'}
 		}
