@@ -1,6 +1,7 @@
 package ccc.compute;
 
-#if (nodejs && !macro)
+import js.npm.docker.Docker;
+#if ((nodejs && !macro) && !excludeccc)
 	import haxe.remoting.JsonRpc;
 	import t9.js.jsonrpc.Routes;
 
@@ -47,6 +48,7 @@ package ccc.compute;
 	typedef Express=Dynamic;
 	typedef IncomingMessage=Dynamic;
 	typedef ServerResponse=Dynamic;
+	typedef DockerUrl=Dynamic;
 #end
 
 /**
@@ -60,7 +62,7 @@ class ServiceBatchCompute
 	})
 	public function getJobResult(jobId :JobId, ?timeout :Float = 1000000) :Promise<JobResult>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		if (timeout == null) {
 			timeout = 1000000;
 		}
@@ -138,7 +140,7 @@ class ServiceBatchCompute
 	})
 	public function nudge() :Promise<ProcessResult>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		return ComputeQueue.processPending(_redis);
 #else
 		return Promise.promise(null);
@@ -151,13 +153,12 @@ class ServiceBatchCompute
 	})
 	public function logLevel(?level :Null<Int>) :Promise<Int>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		if (level != null) {
 			level = Std.parseInt(level + '');
 			Log.warn('Setting log level=$level');
 			Logger.GLOBAL_LOG_LEVEL = level;
 		}
-		// Log.log.level(level);
 		return Promise.promise(Logger.GLOBAL_LOG_LEVEL);
 #else
 		return Promise.promise(1);
@@ -170,7 +171,7 @@ class ServiceBatchCompute
 	})
 	public function pending() :Promise<Array<JobId>>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		return ServerCommands.pending(_redis);
 #else
 		return Promise.promise(null);
@@ -183,7 +184,7 @@ class ServiceBatchCompute
 	})
 	public function status() :Promise<SystemStatus>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		return ServerCommands.status(_redis);
 #else
 		return Promise.promise(null);
@@ -196,7 +197,7 @@ class ServiceBatchCompute
 	})
 	public function serverVersion() :Promise<ServerVersionBlob>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		return Promise.promise(ServerCommands.version());
 #else
 		return Promise.promise(null);
@@ -209,7 +210,7 @@ class ServiceBatchCompute
 	})
 	public function serverReset() :Promise<Bool>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		return ServerCommands.serverReset(_redis, _fs);
 #else
 		return Promise.promise(null);
@@ -222,7 +223,7 @@ class ServiceBatchCompute
 	})
 	public function workerRemove(id :MachineId) :Promise<Bool>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		Assert.notNull(id);
 		return ccc.compute.InstancePool.workerFailed(_redis, id);
 #else
@@ -238,11 +239,13 @@ class ServiceBatchCompute
 			opts: {doc: 'ADD ME', short:'o'}
 		}
 	})
+#if ((nodejs && !macro) && !excludeccc)
 	public function pullRemoteImageIntoRegistry(image :String, ?tag :String, ?opts: PullImageOptions) :Promise<DockerUrl>
 	{
-#if (nodejs && !macro)
 		return ServerCommands.pushImageIntoRegistry(image, tag, opts);
 #else
+	public function pullRemoteImageIntoRegistry(image :String, ?tag :String, ?opts: PullImageOptions) :Promise<Dynamic>
+	{
 		return Promise.promise(null);
 #end
 	}
@@ -294,7 +297,26 @@ class ServiceBatchCompute
 			meta: meta
 		}
 
+#if ((nodejs && !macro) && !excludeccc)
 		return runComputeJobRequest(request);
+#else
+		return Promise.promise(null);
+#end
+	}
+
+	@rpc({
+		alias:'submitJobJson',
+		args:{
+			'job': {'doc':'BasicBatchProcessRequest'}
+		}
+	})
+	public function submitJobJson(job :BasicBatchProcessRequest) :Promise<JobResult>
+	{
+#if ((nodejs && !macro) && !excludeccc)
+		return runComputeJobRequest(job);
+#else
+		return Promise.promise(null);
+#end
 	}
 
 	@rpc({
@@ -303,7 +325,7 @@ class ServiceBatchCompute
 	})
 	public function jobs() :Promise<Array<JobId>>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		return ComputeQueue.getAllJobIds(_redis);
 #else
 		return Promise.promise(null);
@@ -322,7 +344,7 @@ class ServiceBatchCompute
 	})
 	public function doJobCommand(command :JobCLICommand, jobId :Array<JobId>, ?json :Bool = true) :Promise<TypedDynamicObject<JobId,Dynamic>>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		if (command == null) {
 			return PromiseTools.error('Missing command.');
 		}
@@ -384,7 +406,7 @@ class ServiceBatchCompute
 
 	function __doJobCommandInternal(command :JobCLICommand, jobId :Array<JobId>, ?json :Bool = false) :Promise<TypedDynamicObject<JobId,Dynamic>>
 	{
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 		switch(command) {
 			case Remove,RemoveComplete,Kill,Status,Result,ExitCode,Definition,JobStats,Time:
 			default:
@@ -447,7 +469,7 @@ class ServiceBatchCompute
 	}
 
 
-#if (nodejs && !macro)
+#if ((nodejs && !macro) && !excludeccc)
 	@inject public var _fs :ServiceStorage;
 	@inject public var _redis :RedisClient;
 	@inject public var _config :StorageDefinition;
