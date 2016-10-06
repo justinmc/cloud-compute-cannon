@@ -138,7 +138,7 @@ class ServiceBatchCompute
 		alias:'nudge',
 		doc:'Force the model to check pending jobs'
 	})
-	public function nudge() :Promise<ProcessResult>
+	public function nudge() :Promise<Dynamic>
 	{
 #if ((nodejs && !macro) && !excludeccc)
 		return ComputeQueue.processPending(_redis);
@@ -878,9 +878,11 @@ class ServiceBatchCompute
 				}
 				switch(type) {
 					case InputInline:
-						var buffer = new Buffer(input.value, encoding);
-						promises.push(_fs.writeFile(inputFilePath, Streamifier.createReadStream(buffer)));//{encoding:encoding}
-						inputNames.push(input.name);
+						if (input.value != null) {
+							var buffer = new Buffer(input.value, encoding);
+							promises.push(_fs.writeFile(inputFilePath, Streamifier.createReadStream(buffer)));//{encoding:encoding}
+							inputNames.push(input.name);
+						}
 					case InputUrl:
 						if (input.value == null) {
 							throw 'input.value is null for $input';
